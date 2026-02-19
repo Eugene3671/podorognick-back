@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import { connectMongoDB } from './db/connectMongoDB';
+import { connectMongoDB } from './db/connectMongoDB.js';
 app.use(express.json());
 app.use(cors());
 
