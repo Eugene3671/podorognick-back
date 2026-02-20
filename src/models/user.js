@@ -25,4 +25,5 @@ const userSchema = new Schema(
     versionKey: false,
   },
 );
+
 export const User = model('users', userSchema);
