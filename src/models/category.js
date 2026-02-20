@@ -13,4 +13,5 @@ const categorySchema = new Schema(
     versionKey: false,
   },
 );
-const Category = model('categories', categorySchema);
+
+export const Category = model('categories', categorySchema);

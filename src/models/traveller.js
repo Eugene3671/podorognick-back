@@ -40,4 +40,4 @@ const travellerSchema = new Schema(
   },
 );
 
-const Traveller = model('travellers', travellerSchema);
+export const Traveller = model('travellers', travellerSchema);
