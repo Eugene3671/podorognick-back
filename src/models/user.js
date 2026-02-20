@@ -1,17 +1,46 @@
+import { model, Schema } from 'mongoose';
+import bcrypt from 'bcryptjs';
 
-import mongoose from "mongoose";
-import bcrypt from "bcryptjs";
+const userSchema = new Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    avatarUrl: {
+      type: String,
+      default: '',
+    },
+    description: {
+      type: String,
+      required: true,
+    },
+    articlesAmount: {
+      type: Number,
+      default: 0,
+    },
+  },
+  {
+    timestamps: true,
+    versionKey: false,
+  },
+);
 
-const userSchema = new mongoose.Schema({
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-});
-
-// Хеширование пароля перед сохранением
-userSchema.pre("save", async function(next) {
-  if (!this.isModified("password")) return next();
+// Хешування пароля перед збереженням (з коду колеги)
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
   this.password = await bcrypt.hash(this.password, 10);
   next();
 });
 
-export default mongoose.model("User", userSchema);
+export const User = model('users', userSchema);
