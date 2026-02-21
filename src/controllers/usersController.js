@@ -9,7 +9,13 @@ import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
 export const getUsers = async (req, res) => {
   // Отримуємо параметри пагінації та сортування
   // по замовчуванню сортуємо за articlesAmount по спаданню
-  const { page = 1, perPage = 10, maxArticles, search } = req.query;
+  const {
+    page = 1,
+    perPage = 10,
+    search,
+    sortBy = '_id',
+    sortOrder = 'asc',
+  } = req.query;
   const skip = (page - 1) * perPage;
 
   // Створюємо базовий запит до колекції
@@ -20,14 +26,14 @@ export const getUsers = async (req, res) => {
     usersQuery.where({ $text: { $search: search } });
   }
 
-  if (maxArticles) {
-    usersQuery.where('articlesAmount').lte(maxArticles);
-  }
-
   // Виконуємо одразу два запити паралельно
   const [totalItems, users] = await Promise.all([
     usersQuery.clone().countDocuments(),
-    usersQuery.skip(skip).limit(perPage),
+    usersQuery
+      .skip(skip)
+      .limit(perPage)
+      // Додамєдо сортування в ланцюжок методів квері
+      .sort({ [sortBy]: sortOrder }),
   ]);
 
   // Обчислюємо загальну кількість «сторінок»
