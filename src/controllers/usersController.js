@@ -1,7 +1,6 @@
-// src/controllers/studentsController.js
+// src/controllers/usersController.js
 
 import createHttpError from 'http-errors';
-
 import { User } from '../models/user.js';
 import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
 
