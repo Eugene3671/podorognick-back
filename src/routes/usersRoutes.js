@@ -4,6 +4,7 @@ import {
   getUserById,
   updateUserDetails,
   updateUserAvatar,
+  getCurrentUser,
 } from '../controllers/usersController.js';
 
 import { Router } from 'express';
@@ -13,6 +14,7 @@ import { upload } from '../middleware/multer.js';
 const router = Router();
 
 router.get('/', getUsers);
+router.get('/profile', authenticate, getCurrentUser);
 router.get('/:userId', getUserById);
 router.patch(
   '/me/avatar',

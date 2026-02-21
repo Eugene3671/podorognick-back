@@ -23,7 +23,8 @@ const userSchema = new Schema(
     },
     description: {
       type: String,
-      required: true,
+      default: '',
+      // required: true,
     },
     articlesAmount: {
       type: Number,
@@ -42,10 +43,9 @@ const userSchema = new Schema(
 );
 
 // Хешування пароля перед збереженням (з коду колеги)
-userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();
+userSchema.pre('save', async function () {
+  if (!this.isModified('password')) return;
   this.password = await bcrypt.hash(this.password, 10);
-  next();
 });
 
 export const User = model('User', userSchema);
