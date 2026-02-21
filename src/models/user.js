@@ -29,6 +29,11 @@ const userSchema = new Schema(
       type: Number,
       default: 0,
     },
+    savedStories: {
+      type: [Schema.Types.ObjectId],
+      ref: 'travellers',
+      default: [],
+    },
   },
   {
     timestamps: true,
