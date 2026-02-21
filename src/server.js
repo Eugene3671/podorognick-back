@@ -6,13 +6,11 @@ import cors from 'cors';
 import { errors } from 'celebrate';
 
 import { connectMongoDB } from './db/connectMongoDB.js';
-import authRoutes from './routes/authRoutes.js';
 import { logger } from './middleware/logger.js';
 import { notFoundHandler } from './middleware/notFoundHandler.js';
 import { errorHandler } from './middleware/errorHandler.js';
-
-import usersRoutes from './routes/usersRoutes.js';
-import storiesRoutes from './routes/storiesRoutes.js';
+import rootRouter from './routes/index.js';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
@@ -21,13 +19,8 @@ const PORT = process.env.PORT ?? 3000;
 app.use(logger);
 app.use(express.json());
 app.use(cors());
-
-// подключение роутов
-app.use('/api/auth', authRoutes);
-// підключаємо групу маршрутів юзерів
-app.use('/api/users', usersRoutes);
-
-app.use(storiesRoutes);
+app.use(cookieParser());
+app.use('/api', rootRouter);
 
 // 404 і обробник помилок — наприкінці ланцюжка
 app.use(notFoundHandler);
