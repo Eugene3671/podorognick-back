@@ -7,14 +7,21 @@ import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
 
 // Отримати список усіх юзерів
 export const getUsers = async (req, res) => {
-  // Отримуємо параметри пагінації
-  // і задаємо дефолтні значення
-  const { page = 1, perPage = 10 } = req.query;
-
+  // Отримуємо параметри пагінації та сортування
+  // по замовчуванню сортуємо за articlesAmount по спаданню
+  const {
+    page = 1,
+    perPage = 10,
+    sortBy = 'articlesAmount',
+    sortOrder = 'desc',
+  } = req.query;
   const skip = (page - 1) * perPage;
 
   // Створюємо базовий запит до колекції
   const usersQuery = User.find();
+
+  // Додаємо сортування до запиту
+  usersQuery.sort({ [sortBy]: sortOrder === 'asc' ? 1 : -1 });
 
   // Виконуємо одразу два запити паралельно
   const [totalItems, users] = await Promise.all([
