@@ -1,4 +1,5 @@
 import { model, Schema } from 'mongoose';
+import bcrypt from 'bcryptjs';
 
 const userSchema = new Schema(
   {
@@ -7,17 +8,26 @@ const userSchema = new Schema(
       required: true,
       trim: true,
     },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
     avatarUrl: {
       type: String,
       default: '',
     },
-    articlesAmount: {
-      type: Number,
-      default: 0,
-    },
     description: {
       type: String,
       required: true,
+    },
+    articlesAmount: {
+      type: Number,
+      default: 0,
     },
   },
   {
@@ -25,5 +35,12 @@ const userSchema = new Schema(
     versionKey: false,
   },
 );
+
+// Хешування пароля перед збереженням (з коду колеги)
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
+  this.password = await bcrypt.hash(this.password, 10);
+  next();
+});
 
 export const User = model('users', userSchema);

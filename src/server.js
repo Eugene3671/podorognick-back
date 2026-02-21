@@ -5,6 +5,7 @@ import 'dotenv/config';
 import cors from 'cors';
 
 import { connectMongoDB } from './db/connectMongoDB.js';
+import authRoutes from './routes/authRoutes.js';
 import { logger } from './middleware/logger.js';
 import { notFoundHandler } from './middleware/notFoundHandler.js';
 import { errorHandler } from './middleware/errorHandler.js';
@@ -19,6 +20,8 @@ app.use(logger);
 app.use(express.json());
 app.use(cors());
 
+// подключение роутов
+app.use('/api/auth', authRoutes);
 // підключаємо групу маршрутів юзерів
 app.use('/api/users', usersRoutes);
 
