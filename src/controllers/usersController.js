@@ -9,19 +9,20 @@ import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
 export const getUsers = async (req, res) => {
   // Отримуємо параметри пагінації та сортування
   // по замовчуванню сортуємо за articlesAmount по спаданню
-  const {
-    page = 1,
-    perPage = 10,
-    sortBy = 'articlesAmount',
-    sortOrder = 'desc',
-  } = req.query;
+  const { page = 1, perPage = 10, maxArticles, search } = req.query;
   const skip = (page - 1) * perPage;
 
   // Створюємо базовий запит до колекції
   const usersQuery = User.find();
 
-  // Додаємо сортування до запиту
-  usersQuery.sort({ [sortBy]: sortOrder === 'asc' ? 1 : -1 });
+  // Текстовий пошук по name (працює лише якщо створено текстовий індекс)
+  if (search) {
+    usersQuery.where({ $text: { $search: search } });
+  }
+
+  if (maxArticles) {
+    usersQuery.where('articlesAmount').lte(maxArticles);
+  }
 
   // Виконуємо одразу два запити паралельно
   const [totalItems, users] = await Promise.all([

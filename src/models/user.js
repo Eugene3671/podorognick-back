@@ -11,7 +11,6 @@ const userSchema = new Schema(
     email: {
       type: String,
       required: true,
-      unique: true,
     },
     password: {
       type: String,
@@ -46,5 +45,16 @@ userSchema.pre('save', async function (next) {
   this.password = await bcrypt.hash(this.password, 10);
   next();
 });
+
+userSchema.index(
+  { name: 'text' },
+  {
+    name: 'UserTextIndex',
+    weights: { name: 10 },
+    default_language: 'english',
+  },
+);
+
+userSchema.index({ email: 1 }, { unique: true, sparse: true });
 
 export const User = model('User', userSchema);

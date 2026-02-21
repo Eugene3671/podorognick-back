@@ -17,13 +17,9 @@ export const userIdParamSchema = {
 
 export const getUsersSchema = {
   [Segments.QUERY]: Joi.object({
-    page: Joi.number().integer().min(1).default(1),
-    perPage: Joi.number().integer().min(5).max(20).default(10),
-
-    // поле, за яким будемо сортувати (наприклад: articlesAmount)
-    sortBy: Joi.string().valid('articlesAmount').default('articlesAmount'),
-
-    // напрямок сортування: asc або desc
-    sortOrder: Joi.string().valid('asc', 'desc').default('desc'),
+    page: Joi.number().integer().min(1),
+    perPage: Joi.number().integer().min(5).max(20),
+    maxArticles: Joi.number().integer().min(0),
+    search: Joi.string().trim().allow(''),
   }),
 };
