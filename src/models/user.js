@@ -48,4 +48,4 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
-export const User = model('users', userSchema);
+export const User = model('User', userSchema);
