@@ -1,16 +1,21 @@
 import { Router } from 'express';
 import { celebrate } from 'celebrate';
+import { upload } from '../middleware/multer.js';
+
 import {
   getAllStories,
   addToSavedStories,
   deleteSaveStory,
   getALLSaveStory,
+  createStory
+
 } from '../controllers/storiesController.js';
 import {
   getAllStoriesShema,
   addToSavedStoriesSchema,
   deleteSaveStorySchema,
   getALLSaveStoryShema,
+  createStorySchema
 } from '../validations/storiesValidation.js';
 import { authenticate } from '../middleware/authenticate.js';
 
@@ -29,5 +34,17 @@ router.delete(
   celebrate(deleteSaveStorySchema),
   deleteSaveStory,
 );
+
+
+router.post(
+  "/",
+  authenticate,
+  upload.single("img"),
+  celebrate(createStorySchema),
+  createStory
+);
+
+
+
 
 export default router;
