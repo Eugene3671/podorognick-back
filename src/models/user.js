@@ -29,6 +29,11 @@ const userSchema = new Schema(
       type: Number,
       default: 0,
     },
+    savedStories: {
+      type: [Schema.Types.ObjectId],
+      ref: 'travellers',
+      default: [],
+    },
   },
   {
     timestamps: true,
@@ -40,7 +45,6 @@ const userSchema = new Schema(
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
   this.password = await bcrypt.hash(this.password, 10);
-  next();
 });
 
 export const User = model('users', userSchema);
