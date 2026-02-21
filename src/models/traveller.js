@@ -47,4 +47,4 @@ travellerSchema.index(
   },
 );
 
-export const Traveller = model('travellers', travellerSchema);
+export const Traveller = model('Traveller', travellerSchema);
