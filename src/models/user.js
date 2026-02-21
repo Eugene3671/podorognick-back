@@ -1,4 +1,5 @@
 import { model, Schema } from 'mongoose';
+import bcrypt from 'bcryptjs';
 
 const userSchema = new Schema(
   {
@@ -7,7 +8,20 @@ const userSchema = new Schema(
       required: true,
       trim: true,
     },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
     avatarUrl: {
+      type: String,
+      default: '',
+    },
+    description: {
       type: String,
       default: '',
     },
@@ -15,9 +29,10 @@ const userSchema = new Schema(
       type: Number,
       default: 0,
     },
-    description: {
-      type: String,
-      required: true,
+    savedStories: {
+      type: [Schema.Types.ObjectId],
+      ref: 'travellers',
+      default: [],
     },
   },
   {
@@ -25,4 +40,17 @@ const userSchema = new Schema(
     versionKey: false,
   },
 );
-export const User = model('users', userSchema);
+
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
+  this.password = await bcrypt.hash(this.password, 10);
+  next();
+});
+
+userSchema.methods.toJSON = function () {
+  const obj = this.toObject();
+  delete obj.password;
+  return obj;
+};
+
+export const User = model('User', userSchema);

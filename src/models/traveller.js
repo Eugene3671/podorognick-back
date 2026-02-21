@@ -40,4 +40,11 @@ const travellerSchema = new Schema(
   },
 );
 
-const Traveller = model('travellers', travellerSchema);
+travellerSchema.index(
+  { category: 1 },
+  {
+    name: 'StoryIndex',
+  },
+);
+
+export const Traveller = model('Traveller', travellerSchema);

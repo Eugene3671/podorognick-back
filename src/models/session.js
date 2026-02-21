@@ -1,4 +1,4 @@
-import { Schema } from 'mongoose';
+import { model, Schema } from 'mongoose';
 
 const sessionSchema = new Schema(
   {
@@ -6,12 +6,13 @@ const sessionSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: 'users',
       required: true,
-      accessToken: { type: String, required: true },
-      refreshToken: { type: String, required: true },
-      accessTokenValidUntil: { type: Date, required: true },
-      refreshTokenValidUntil: { type: Date, required: true },
     },
+    accessToken: { type: String, required: true },
+    refreshToken: { type: String, required: true },
+    accessTokenValidUntil: { type: Date, required: true },
+    refreshTokenValidUntil: { type: Date, required: true },
   },
-  { timestamps: true },
+  { timestamps: true, versionKey: false },
 );
-export const Session = model('sessions', sessionSchema);
+
+export const Session = model('Session', sessionSchema);
