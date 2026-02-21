@@ -143,10 +143,15 @@ export const createStory = async (req, res) => {
   try {
      if (!req.file) {
       throw createHttpError(400, "storyImage is required");
-    }
+     }
+
+     const folderName = "stories";
+    const userId = req.user._id.toString();
 
 
-    const result = await saveFileToCloudinary(req.file.buffer);
+    const result = await saveFileToCloudinary(req.file.buffer,
+      folderName,
+      userId);
 
     const story = await Story.create({
       title: req.body.title,
