@@ -17,12 +17,12 @@ const travellerSchema = new Schema(
     },
     category: {
       type: Schema.Types.ObjectId,
-      ref: 'categories',
+      ref: 'Category',
       required: true,
     },
     ownerId: {
       type: Schema.Types.ObjectId,
-      ref: 'users',
+      ref: 'User',
       required: true,
     },
     date: {

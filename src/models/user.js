@@ -31,7 +31,7 @@ const userSchema = new Schema(
     },
     savedStories: {
       type: [Schema.Types.ObjectId],
-      ref: 'travellers',
+      ref: 'Traveller',
       default: [],
     },
   },
