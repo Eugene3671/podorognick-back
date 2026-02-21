@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import { celebrate } from 'celebrate';
-import { authMiddleware } from '../middleware/authMiddleware.js';
 import {
   getAllStories,
   addToSavedStories,
@@ -13,19 +12,20 @@ import {
   deleteSaveStorySchema,
   getALLSaveStoryShema,
 } from '../validations/storiesValidation.js';
+import { authenticate } from '../middleware/authenticate.js';
 
 const router = Router();
 
-router.get('/stories', celebrate(getAllStoriesShema), getAllStories);
-router.use('/stories', authMiddleware);
-router.get('/stories/saved', celebrate(getALLSaveStoryShema), getALLSaveStory);
+router.get('/', celebrate(getAllStoriesShema), getAllStories);
+router.use('/', authenticate);
+router.get('/saved', celebrate(getALLSaveStoryShema), getALLSaveStory);
 router.post(
-  '/stories/:storyId/save',
+  '/:storyId/save',
   celebrate(addToSavedStoriesSchema),
   addToSavedStories,
 );
 router.delete(
-  '/stories/:storyId/save',
+  '/:storyId/save',
   celebrate(deleteSaveStorySchema),
   deleteSaveStory,
 );
