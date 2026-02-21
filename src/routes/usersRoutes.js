@@ -13,12 +13,15 @@ import {
 
 import { authenticate } from '../middleware/authenticate.js';
 import { upload } from '../middleware/multer.js';
-import { userIdParamSchema } from '../validations/usersValidation.js';
+import {
+  userIdParamSchema,
+  getUsersSchema,
+} from '../validations/usersValidation.js';
 
 const router = Router();
 
 // Отримати всіх користувачів
-router.get('/', getUsers);
+router.get('/', celebrate(getUsersSchema), getUsers);
 
 // Отримати профіль поточного користувача
 router.get('/profile', authenticate, getCurrentUser);
