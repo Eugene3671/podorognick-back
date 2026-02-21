@@ -21,3 +21,16 @@ export const getUserById = async (req, res) => {
 
   res.status(200).json(user);
 };
+
+// Отримати профіль поточного юзера
+export const getCurrentUser = async (req, res) => {
+  const user = req.user;
+
+  res.json({
+    name: user.name,
+    email: user.email,
+    avatarUrl: user.avatarUrl,
+    description: user.description,
+    articlesAmount: user.articlesAmount,
+  });
+};

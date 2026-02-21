@@ -17,12 +17,12 @@ const generateRefreshToken = (userId) => {
 
 // Реєстрація
 export const register = async (req, res) => {
-  const { email, password } = req.body;
+  const { name, email, password } = req.body;
   try {
     const exist = await User.findOne({ email });
     if (exist) return res.status(400).json({ message: 'User already exists' });
 
-    const user = new User({ email, password });
+    const user = new User({ name, email, password });
     await user.save();
 
     const accessToken = generateAccessToken(user._id);
