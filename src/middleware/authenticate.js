@@ -13,7 +13,7 @@ export const authenticate = async (req, res, next) => {
   }
 
   const session = await Session.findOne({
-    accessToken: req.cookies.accessToken,
+    accessToken: accessToken,
   });
 
   if (!session) {
