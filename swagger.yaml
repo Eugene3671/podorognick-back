@@ -4,245 +4,245 @@ info:
   description: API для блогу мандрівників
   version: 1.0.0
 servers:
-- url: http://localhost:3000/api
-  description: Local development
-- url: https://podorognick-back.onrender.com/api
-  description: Production
+  - url: http://localhost:3000/api
+    description: Local development
+  - url: https://podorognick-back.onrender.com/api
+    description: Production
 paths:
   /auth/register:
     post:
       tags:
-      - Auth
+        - Auth
       summary: Реєстрація користувача
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/auth_register_body"
+              $ref: '#/components/schemas/auth_register_body'
         required: true
       responses:
-        "201":
+        '201':
           description: Успішна реєстрація
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/inline_response_201"
+                $ref: '#/components/schemas/inline_response_201'
   /auth/login:
     post:
       tags:
-      - Auth
+        - Auth
       summary: Логін користувача
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/auth_login_body"
+              $ref: '#/components/schemas/auth_login_body'
         required: true
       responses:
-        "200":
+        '200':
           description: Успішний вхід
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/inline_response_200"
+                $ref: '#/components/schemas/inline_response_200'
   /auth/logout:
     post:
       tags:
-      - Auth
+        - Auth
       summary: Вихід (Logout)
       responses:
-        "204":
+        '204':
           description: Успішний вихід (No Content)
       security:
-      - bearerAuth: []
+        - bearerAuth: []
   /stories:
     get:
       tags:
-      - Stories
+        - Stories
       summary: Отримати список всіх історій
-      description: "Цей роут публічний, токен не потрібен."
+      description: 'Цей роут публічний, токен не потрібен.'
       parameters:
-      - name: page
-        in: query
-        description: Номер сторінки
-        required: false
-        schema:
-          type: integer
-      - name: perPage
-        in: query
-        description: Кількість на сторінці
-        required: false
-        schema:
-          type: integer
+        - name: page
+          in: query
+          description: Номер сторінки
+          required: false
+          schema:
+            type: integer
+        - name: perPage
+          in: query
+          description: Кількість на сторінці
+          required: false
+          schema:
+            type: integer
       responses:
-        "200":
+        '200':
           description: Список історій
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Story"
+                  $ref: '#/components/schemas/Story'
   /stories/saved:
     get:
       tags:
-      - Stories
+        - Stories
       summary: Отримати збережені історії (Saved)
       responses:
-        "200":
+        '200':
           description: Список збережених історій поточного юзера
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Story"
+                  $ref: '#/components/schemas/Story'
       security:
-      - bearerAuth: []
+        - bearerAuth: []
   /stories/{storyId}/save:
     post:
       tags:
-      - Stories
+        - Stories
       summary: Додати історію в обране
       parameters:
-      - name: storyId
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: storyId
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
-        "200":
+        '200':
           description: Історія додана до збережених
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/inline_response_200_1"
+                $ref: '#/components/schemas/inline_response_200_1'
       security:
-      - bearerAuth: []
+        - bearerAuth: []
     delete:
       tags:
-      - Stories
+        - Stories
       summary: Видалити історію з обраного
       parameters:
-      - name: storyId
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: storyId
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
-        "200":
+        '200':
           description: Історія видалена зі збережених
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/inline_response_200_2"
+                $ref: '#/components/schemas/inline_response_200_2'
       security:
-      - bearerAuth: []
+        - bearerAuth: []
   /users:
     get:
       tags:
-      - Users
+        - Users
       summary: Отримати список всіх юзерів з пагінацією та фільтрацією
       parameters:
-      - name: page
-        in: query
-        description: Номер сторінки
-        required: false
-        schema:
-          type: integer
-          default: 1
-      - name: perPage
-        in: query
-        description: Кількість юзерів на сторінці
-        required: false
-        schema:
-          type: integer
-          default: 10
-      - name: search
-        in: query
-        description: Текстовий пошук за ім'ям (name)
-        required: false
-        schema:
-          type: string
+        - name: page
+          in: query
+          description: Номер сторінки
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: perPage
+          in: query
+          description: Кількість юзерів на сторінці
+          required: false
+          schema:
+            type: integer
+            default: 10
+        - name: search
+          in: query
+          description: Текстовий пошук за ім'ям (name)
+          required: false
+          schema:
+            type: string
       responses:
-        "200":
+        '200':
           description: Успішно отримано список користувачів
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/inline_response_200_3"
-        "500":
+                $ref: '#/components/schemas/inline_response_200_3'
+        '500':
           description: Помилка сервера
   /users/profile:
     get:
       tags:
-      - Users
+        - Users
       summary: Отримати профіль поточного юзера (Me)
       responses:
-        "200":
+        '200':
           description: Дані профілю
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
+                $ref: '#/components/schemas/User'
       security:
-      - bearerAuth: []
+        - bearerAuth: []
   /users/{userId}:
     get:
       tags:
-      - Users
+        - Users
       summary: Отримати юзера за ID
       parameters:
-      - name: userId
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
-        "200":
+        '200':
           description: Дані користувача
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
+                $ref: '#/components/schemas/User'
   /users/me:
     patch:
       tags:
-      - Users
+        - Users
       summary: Оновити дані профілю (крім аватара)
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/users_me_body"
+              $ref: '#/components/schemas/users_me_body'
       responses:
-        "200":
+        '200':
           description: Профіль оновлено
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
+                $ref: '#/components/schemas/User'
       security:
-      - bearerAuth: []
+        - bearerAuth: []
   /users/me/avatar:
     patch:
       tags:
-      - Users
+        - Users
       summary: Оновити аватар користувача
       requestBody:
         content:
           multipart/form-data:
             schema:
-              $ref: "#/components/schemas/me_avatar_body"
+              $ref: '#/components/schemas/me_avatar_body'
       responses:
-        "200":
+        '200':
           description: Аватар оновлено
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/inline_response_200_4"
+                $ref: '#/components/schemas/inline_response_200_4'
       security:
-      - bearerAuth: []
+        - bearerAuth: []
 components:
   schemas:
     Error:
@@ -317,9 +317,9 @@ components:
           format: date-time
     auth_register_body:
       required:
-      - email
-      - name
-      - password
+        - email
+        - name
+        - password
       type: object
       properties:
         name:
@@ -333,14 +333,14 @@ components:
     inline_response_201:
       type: object
       properties:
-        user:
-          $ref: "#/components/schemas/User"
-        token:
+        accsessToken:
           type: string
+        user:
+          $ref: '#/components/schemas/User'
     auth_login_body:
       required:
-      - email
-      - password
+        - email
+        - password
       type: object
       properties:
         email:
@@ -350,14 +350,14 @@ components:
         password:
           type: string
           format: password
-          example: "1234567"
+          example: '1234567'
     inline_response_200:
       type: object
       properties:
-        token:
+        accsessToken:
           type: string
         user:
-          $ref: "#/components/schemas/User"
+          $ref: '#/components/schemas/User'
     inline_response_200_1:
       type: object
       properties:
@@ -388,7 +388,7 @@ components:
         users:
           type: array
           items:
-            $ref: "#/components/schemas/User"
+            $ref: '#/components/schemas/User'
     users_me_body:
       type: object
       properties:
