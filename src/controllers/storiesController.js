@@ -3,7 +3,6 @@ import { Traveller } from '../models/traveller.js';
 import { User } from '../models/user.js';
 import mongoose from 'mongoose';
 import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
-import { Story } from '../models/story.js';
 
 
 
@@ -153,10 +152,14 @@ export const createStory = async (req, res) => {
       folderName,
       userId);
 
-    const story = await Story.create({
-      title: req.body.title,
-      description: req.body.description,
-      category: req.body.category,
+
+        const { title, article, category, date } = req.body;
+
+    const story = await Traveller.create({
+      title,
+      article,
+      category,
+      date,
       ownerId: req.user._id,
       img: result.secure_url,
     });

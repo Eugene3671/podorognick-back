@@ -40,13 +40,18 @@ export const createStorySchema = {
       "string.empty": "Title is required",
       "string.max": "Title must be at most 80 characters",
     }),
-    description: Joi.string().max(2500).required().messages({
-      "string.empty": "Description is required",
-      "string.max": "Description must be at most 2500 characters",
+    article: Joi.string().max(2500).required().messages({
+      "string.empty": "Article is required",
+      "string.max": "Article must be at most 2500 characters",
     }),
+
     category: Joi.string().required().messages({
-       "any.required": "Category is required",
-    "string.empty": "Category is required",
+      "any.required": "Category is required",
+      "string.empty": "Category is required",
+    }),
+    date: Joi.string().required().messages({
+      "any.required": "Date is required",
+      "string.empty": "Date is required",
     }),
   }),
 };
