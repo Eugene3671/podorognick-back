@@ -33,7 +33,7 @@ router.get('/:userId', celebrate(userIdParamSchema), getUserById);
 router.patch(
   '/me/avatar',
   authenticate,
-  upload.single('avatar'),
+  upload.single('avatarUrl'),
   updateUserAvatar,
 );
 

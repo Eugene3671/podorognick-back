@@ -2,6 +2,8 @@ import createHttpError from 'http-errors';
 import { Traveller } from '../models/traveller.js';
 import { User } from '../models/user.js';
 import mongoose from 'mongoose';
+import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
+
 export const getAllStories = async (req, res) => {
   const { category, page = 1, perPage = 10 } = req.query;
 
@@ -130,4 +132,40 @@ export const getALLSaveStory = async (req, res) => {
     totalStories,
     stories: storiesQuery.savedStories,
   });
+};
+
+export const createStory = async (req, res) => {
+  try {
+    if (!req.file) {
+      throw createHttpError(400, 'storyImage is required');
+    }
+
+    const folderName = 'stories';
+    const userId = req.user._id.toString();
+
+    const result = await saveFileToCloudinary(
+      req.file.buffer,
+      folderName,
+      userId,
+    );
+
+    const { title, article, category, date } = req.body;
+
+    const story = await Traveller.create({
+      title,
+      article,
+      category,
+      date,
+      ownerId: req.user._id,
+      img: result.secure_url,
+    });
+
+    await User.findByIdAndUpdate(req.user._id, {
+      $inc: { articlesAmount: 1 },
+    });
+    res.status(201).json(story);
+  } catch (error) {
+    console.error(error);
+    res.status(error.status || 500).json({ message: error.message });
+  }
 };
