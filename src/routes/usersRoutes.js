@@ -19,7 +19,7 @@ router.get('/:userId', getUserById);
 router.patch(
   '/me/avatar',
   authenticate,
-  upload.single('avatar'),
+  upload.single('avatarUrl'),
   updateUserAvatar,
 );
 router.patch('/me', authenticate, updateUserDetails);
