@@ -11,13 +11,10 @@ export const register = async (req, res, next) => {
     const exist = await User.findOne({ email });
     if (exist) return next(createHttpError(400, 'User already exists'));
 
-    // Хешуємо пароль
-    const hashedPassword = await bcrypt.hash(password, 10);
-
     const newUser = await User.create({
       name,
       email,
-      password: hashedPassword,
+      password,
     });
 
     const newSession = await createSession(newUser._id);
