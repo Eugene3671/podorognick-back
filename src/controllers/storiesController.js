@@ -5,7 +5,7 @@ import mongoose from 'mongoose';
 import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
 
 export const getAllStories = async (req, res) => {
-  const { category, page = 1, perPage = 10 } = req.query;
+  const { category, page = 1, perPage = 9, sort } = req.query;
 
   const skip = (page - 1) * perPage;
 
@@ -15,9 +15,21 @@ export const getAllStories = async (req, res) => {
     storiesQuery.where({ category });
   }
 
+  if (sort === 'popular') {
+    storiesQuery.sort({ favoriteCount: -1 });
+  }
+
+  if (sort === 'new') {
+    storiesQuery.sort({ date: -1 });
+  }
+
   const [totalStories, stories] = await Promise.all([
     storiesQuery.clone().countDocuments(),
-    storiesQuery.skip(skip).limit(perPage),
+    storiesQuery
+      .populate('category', 'name')
+      .populate('ownerId', 'name avatarUrl')
+      .skip(skip)
+      .limit(perPage),
   ]);
 
   const totalPages = Math.ceil(totalStories / perPage);
