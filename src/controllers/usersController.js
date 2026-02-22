@@ -3,6 +3,7 @@
 import createHttpError from 'http-errors';
 import { User } from '../models/user.js';
 import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
+import { Traveller } from '../models/traveller.js';
 
 // Отримати список усіх юзерів
 export const getUsers = async (req, res) => {
@@ -47,16 +48,22 @@ export const getUsers = async (req, res) => {
   });
 };
 
-// Отримати одного юзера за id
+// Отримати одного юзера за id + його статті
 export const getUserById = async (req, res) => {
   const { userId } = req.params;
-  const user = await User.findById(userId);
 
+  const user = await User.findById(userId).select('-password');
   if (!user) {
     throw createHttpError(404, 'User not found');
   }
 
-  res.status(200).json(user);
+  // отримуємо статті користувача
+  const stories = await Traveller.find({ ownerId: userId });
+
+  res.status(200).json({
+    user,
+    stories,
+  });
 };
 
 // Отримати профіль поточного юзера
