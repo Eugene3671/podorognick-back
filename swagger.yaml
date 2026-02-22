@@ -333,7 +333,7 @@ components:
     inline_response_201:
       type: object
       properties:
-        accsessToken:
+        accessToken:
           type: string
         user:
           $ref: '#/components/schemas/User'
@@ -354,7 +354,7 @@ components:
     inline_response_200:
       type: object
       properties:
-        accsessToken:
+        accessToken:
           type: string
         user:
           $ref: '#/components/schemas/User'
