@@ -48,8 +48,8 @@ export const login = async (req, res, next) => {
     const newSession = await createSession(user._id);
     setSessionCookies(res, newSession);
 
-    res.status(201).json({
-      status: 201,
+    res.status(200).json({
+      status: 200,
       message: 'Successfully login!',
       data: {
         accessToken: newSession.accessToken,
