@@ -61,31 +61,10 @@ export const updateUserAvatar = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-
-  if (!req.file) {
-    next(createHttpError(400, 'No file'));
-    return;
-  }
-
-  const result = await saveFileToCloudinary(
-    req.file.buffer,
-    'avatar',
-    req.user._id,
-  );
-
-  const user = await User.findByIdAndUpdate(
-    req.user._id,
-    { avatarUrl: result.secure_url },
-    { new: true },
-  );
-
-  res.status(200).json({ url: user.avatar });
 };
 
 export const updateUserDetails = async (req, res, next) => {
-  const { userId } = req.params;
-
-  const user = await User.findOneAndUpdate({ _id: userId }, req.body, {
+  const user = await User.findOneAndUpdate(req.user._id, req.body, {
     new: true,
   });
 
@@ -94,5 +73,9 @@ export const updateUserDetails = async (req, res, next) => {
     return;
   }
 
-  res.status(200).json(user);
+  res.status(200).json({
+    status: 200,
+    message: 'Profile updated successfully',
+    data: user,
+  });
 };
