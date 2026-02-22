@@ -11,7 +11,6 @@ const userSchema = new Schema(
     email: {
       type: String,
       required: true,
-      unique: true,
     },
     password: {
       type: String,
@@ -61,5 +60,7 @@ userSchema.methods.toJSON = function () {
   delete obj.password;
   return obj;
 };
+
+userSchema.index({ email: 1 }, { unique: true, sparse: true });
 
 export const User = model('User', userSchema);
