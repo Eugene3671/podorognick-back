@@ -4,7 +4,9 @@ import express from 'express';
 import 'dotenv/config';
 import cors from 'cors';
 import { errors } from 'celebrate';
-
+import swaggerUi from 'swagger-ui-express';
+import yaml from 'yamljs';
+import path from 'path';
 import { connectMongoDB } from './db/connectMongoDB.js';
 import { logger } from './middleware/logger.js';
 import { notFoundHandler } from './middleware/notFoundHandler.js';
@@ -29,6 +31,15 @@ app.use(
     max: 100,
   }),
 );
+
+// ДОКУМЕНТАЦІЯ SWAGGER
+try {
+  const swaggerDocument = yaml.load(path.resolve('swagger.yaml'));
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+} catch (e) {
+  console.error('Swagger document failed to load:', e);
+}
+
 app.use('/api', rootRouter);
 
 // 404 і обробник помилок — наприкінці ланцюжка

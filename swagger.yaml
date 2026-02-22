@@ -1,9 +1,414 @@
-import swaggerUi from 'swagger-ui-express';
-import yaml from 'yamljs';
-import path from 'path';
-
-// Завантажуємо файл
-const swaggerDocument = yaml.load(path.resolve('./swagger.yaml'));
-
-// Налаштовуємо ендпоінт
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+openapi: 3.0.0
+info:
+  title: Podorognick
+  description: API для блогу мандрівників
+  version: 1.0.0
+servers:
+- url: http://localhost:3000/api
+  description: Local development
+- url: https://podorognick-back.onrender.com/api
+  description: Production
+paths:
+  /auth/register:
+    post:
+      tags:
+      - Auth
+      summary: Реєстрація користувача
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/auth_register_body"
+        required: true
+      responses:
+        "201":
+          description: Успішна реєстрація
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/inline_response_201"
+  /auth/login:
+    post:
+      tags:
+      - Auth
+      summary: Логін користувача
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/auth_login_body"
+        required: true
+      responses:
+        "200":
+          description: Успішний вхід
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/inline_response_200"
+  /auth/logout:
+    post:
+      tags:
+      - Auth
+      summary: Вихід (Logout)
+      responses:
+        "204":
+          description: Успішний вихід (No Content)
+      security:
+      - bearerAuth: []
+  /stories:
+    get:
+      tags:
+      - Stories
+      summary: Отримати список всіх історій
+      description: "Цей роут публічний, токен не потрібен."
+      parameters:
+      - name: page
+        in: query
+        description: Номер сторінки
+        required: false
+        schema:
+          type: integer
+      - name: perPage
+        in: query
+        description: Кількість на сторінці
+        required: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Список історій
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Story"
+  /stories/saved:
+    get:
+      tags:
+      - Stories
+      summary: Отримати збережені історії (Saved)
+      responses:
+        "200":
+          description: Список збережених історій поточного юзера
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Story"
+      security:
+      - bearerAuth: []
+  /stories/{storyId}/save:
+    post:
+      tags:
+      - Stories
+      summary: Додати історію в обране
+      parameters:
+      - name: storyId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Історія додана до збережених
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/inline_response_200_1"
+      security:
+      - bearerAuth: []
+    delete:
+      tags:
+      - Stories
+      summary: Видалити історію з обраного
+      parameters:
+      - name: storyId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Історія видалена зі збережених
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/inline_response_200_2"
+      security:
+      - bearerAuth: []
+  /users:
+    get:
+      tags:
+      - Users
+      summary: Отримати список всіх юзерів з пагінацією та фільтрацією
+      parameters:
+      - name: page
+        in: query
+        description: Номер сторінки
+        required: false
+        schema:
+          type: integer
+          default: 1
+      - name: perPage
+        in: query
+        description: Кількість юзерів на сторінці
+        required: false
+        schema:
+          type: integer
+          default: 10
+      - name: search
+        in: query
+        description: Текстовий пошук за ім'ям (name)
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Успішно отримано список користувачів
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/inline_response_200_3"
+        "500":
+          description: Помилка сервера
+  /users/profile:
+    get:
+      tags:
+      - Users
+      summary: Отримати профіль поточного юзера (Me)
+      responses:
+        "200":
+          description: Дані профілю
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+      security:
+      - bearerAuth: []
+  /users/{userId}:
+    get:
+      tags:
+      - Users
+      summary: Отримати юзера за ID
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Дані користувача
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+  /users/me:
+    patch:
+      tags:
+      - Users
+      summary: Оновити дані профілю (крім аватара)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/users_me_body"
+      responses:
+        "200":
+          description: Профіль оновлено
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+      security:
+      - bearerAuth: []
+  /users/me/avatar:
+    patch:
+      tags:
+      - Users
+      summary: Оновити аватар користувача
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/me_avatar_body"
+      responses:
+        "200":
+          description: Аватар оновлено
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/inline_response_200_4"
+      security:
+      - bearerAuth: []
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 65f2a1b2c3d4e5f6a7b8c9d0
+        name:
+          type: string
+          example: John Doe
+        email:
+          type: string
+          format: email
+          example: john@example.com
+        avatarUrl:
+          type: string
+          example: https://ac.goit.global/fullstack/react/default-avatar.jpg
+        description:
+          type: string
+          example: Люблю подорожувати горами
+        articlesAmount:
+          type: integer
+          example: 5
+        savedStories:
+          type: array
+          description: Масив ID збережених історій
+          items:
+            type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    Story:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 65f2a1b2c3d4e5f6a7b8c9d1
+        title:
+          type: string
+          example: Подорож у Карпати
+        article:
+          type: string
+          description: Текст статті
+        img:
+          type: string
+          example: https://res.cloudinary.com/.../image.jpg
+        category:
+          type: string
+          description: ID категорії
+          example: 65f2a1b2c3d4e5f6a7b8c9d2
+        ownerId:
+          type: string
+          description: ID автора
+          example: 65f2a1b2c3d4e5f6a7b8c9d0
+        date:
+          type: string
+          example: 2023-10-15
+        favoriteCount:
+          type: integer
+          example: 42
+        createdAt:
+          type: string
+          format: date-time
+    auth_register_body:
+      required:
+      - email
+      - name
+      - password
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          minLength: 6
+          type: string
+    inline_response_201:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+        token:
+          type: string
+    auth_login_body:
+      required:
+      - email
+      - password
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: test@example.com
+        password:
+          type: string
+          format: password
+          example: "1234567"
+    inline_response_200:
+      type: object
+      properties:
+        token:
+          type: string
+        user:
+          $ref: "#/components/schemas/User"
+    inline_response_200_1:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Story added to favorites
+    inline_response_200_2:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Story removed from favorites
+    inline_response_200_3:
+      type: object
+      properties:
+        page:
+          type: integer
+          example: 1
+        perPage:
+          type: integer
+          example: 10
+        totalItems:
+          type: integer
+          example: 50
+        totalPages:
+          type: integer
+          example: 5
+        users:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
+    users_me_body:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+    me_avatar_body:
+      type: object
+      properties:
+        avatar:
+          type: string
+          format: binary
+    inline_response_200_4:
+      type: object
+      properties:
+        avatarUrl:
+          type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
