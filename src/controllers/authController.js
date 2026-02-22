@@ -20,7 +20,14 @@ export const register = async (req, res, next) => {
     const newSession = await createSession(newUser._id);
     setSessionCookies(res, newSession);
 
-    res.status(201).json(newUser);
+    res.status(201).json({
+      status: 201,
+      message: 'Successfully registered user!',
+      data: {
+        accessToken: newSession.accessToken,
+        user: newUser,
+      },
+    });
   } catch (err) {
     return next(createHttpError(500, { message: err.message }));
   }
@@ -41,7 +48,14 @@ export const login = async (req, res, next) => {
     const newSession = await createSession(user._id);
     setSessionCookies(res, newSession);
 
-    res.json(user);
+    res.status(201).json({
+      status: 201,
+      message: 'Successfully login!',
+      data: {
+        accessToken: newSession.accessToken,
+        user: user,
+      },
+    });
   } catch (err) {
     return next(createHttpError(500, { message: err.message }));
   }
