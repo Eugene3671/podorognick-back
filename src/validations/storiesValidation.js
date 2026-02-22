@@ -31,3 +31,27 @@ export const getALLSaveStoryShema = {
     perPage: Joi.number().integer().min(3).max(20).default(6),
   }),
 };
+
+
+
+export const createStorySchema = {
+  [Segments.BODY]: Joi.object({
+    title: Joi.string().max(80).required().messages({
+      "string.empty": "Title is required",
+      "string.max": "Title must be at most 80 characters",
+    }),
+    article: Joi.string().max(2500).required().messages({
+      "string.empty": "Article is required",
+      "string.max": "Article must be at most 2500 characters",
+    }),
+
+    category: Joi.string().required().messages({
+      "any.required": "Category is required",
+      "string.empty": "Category is required",
+    }),
+    date: Joi.string().required().messages({
+      "any.required": "Date is required",
+      "string.empty": "Date is required",
+    }),
+  }),
+};
