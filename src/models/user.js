@@ -56,7 +56,6 @@ userSchema.index(
   },
 );
 
-userSchema.index({ email: 1 }, { unique: true, sparse: true });
 userSchema.methods.toJSON = function () {
   const obj = this.toObject();
   delete obj.password;
