@@ -181,3 +181,49 @@ export const createStory = async (req, res) => {
     res.status(error.status || 500).json({ message: error.message });
   }
 };
+
+export const getMyStories = async (req, res) => {
+  const { page = 1, perPage = 6 } = req.query;
+  const userId = req.user._id;
+  const skip = (page - 1) * perPage;
+  const storiesQuery = Traveller.find({ ownerId: userId });
+
+  const [totalStories, stories] = await Promise.all([
+    storiesQuery.clone().countDocuments(),
+    storiesQuery
+      .clone()
+      .sort({ date: -1 })
+      .populate('category', 'name')
+      .skip(skip)
+      .limit(Number(perPage)),
+  ]);
+
+  const totalPages = Math.ceil(totalStories / perPage);
+
+  res.status(200).json({
+    page: Number(page),
+    perPage: Number(perPage),
+    totalStories,
+    totalPages,
+    stories,
+  });
+};
+export const updateStory = async (req, res, next) => {
+  try {
+    const { storyId } = req.params;
+
+    const updatedStory = await Traveller.findOneAndUpdate(
+      { _id: storyId, ownerId: req.user._id },
+      req.body,
+      { new: true },
+    );
+
+    if (!updatedStory) {
+      throw createHttpError(404, 'Story not found');
+    }
+
+    res.status(200).json(updatedStory);
+  } catch (error) {
+    next(error);
+  }
+};
