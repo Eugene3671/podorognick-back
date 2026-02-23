@@ -54,3 +54,12 @@ export const createStorySchema = {
     }),
   }),
 };
+
+export const updateStorySchema = {
+  [Segments.BODY]: Joi.object({
+    title: Joi.string().min(3),
+    article: Joi.string().min(10),
+    category: Joi.string(),
+    date: Joi.date(),
+  }).min(1),
+};

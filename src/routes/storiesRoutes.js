@@ -7,15 +7,16 @@ import {
   addToSavedStories,
   deleteSaveStory,
   getALLSaveStory,
-  createStory
-
+  createStory,
+  updateStory, //new
 } from '../controllers/storiesController.js';
 import {
   getAllStoriesShema,
   addToSavedStoriesSchema,
   deleteSaveStorySchema,
   getALLSaveStoryShema,
-  createStorySchema
+  createStorySchema,
+  updateStorySchema, //new
 } from '../validations/storiesValidation.js';
 import { authenticate } from '../middleware/authenticate.js';
 
@@ -35,16 +36,14 @@ router.delete(
   deleteSaveStory,
 );
 
-
 router.post(
-  "/",
+  '/',
   authenticate,
-  upload.single("img"),
+  upload.single('img'),
   celebrate(createStorySchema),
-  createStory
+  createStory,
 );
 
-
-
+router.patch('/:storyId', celebrate(updateStorySchema), updateStory);
 
 export default router;
