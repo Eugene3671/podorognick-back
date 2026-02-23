@@ -182,6 +182,32 @@ export const createStory = async (req, res) => {
   }
 };
 
+export const getMyStories = async (req, res) => {
+  const { page = 1, perPage = 6 } = req.query;
+  const userId = req.user._id;
+  const skip = (page - 1) * perPage;
+  const storiesQuery = Traveller.find({ ownerId: userId });
+
+  const [totalStories, stories] = await Promise.all([
+    storiesQuery.clone().countDocuments(),
+    storiesQuery
+      .clone()
+      .sort({ date: -1 })
+      .populate('category', 'name')
+      .skip(skip)
+      .limit(Number(perPage)),
+  ]);
+
+  const totalPages = Math.ceil(totalStories / perPage);
+
+  res.status(200).json({
+    page: Number(page),
+    perPage: Number(perPage),
+    totalStories,
+    totalPages,
+    stories,
+  });
+};
 export const updateStory = async (req, res, next) => {
   try {
     const { storyId } = req.params;
