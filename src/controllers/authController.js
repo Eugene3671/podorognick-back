@@ -156,3 +156,31 @@ export const requestResetEmail = async (req, res) => {
     message: 'If this email exists, a reset link has been sent',
   });
 };
+
+export const resetPassword = async (req, res) => {
+  const { password, token } = req.body;
+  // 1. Перевіряємо/декодуємо токен
+  let payload;
+  try {
+    payload = jwt.verify(token, process.env.JWT_SECRET);
+  } catch {
+    // Повертаємо помилку якщо проблема при декодуванні
+    throw createHttpError(401, 'Invalid or expired token');
+  }
+  // 2. Шукаємо користувача
+  const user = await User.findOne({ _id: payload.sub, email: payload.email });
+
+  if (!user) {
+    throw createHttpError(404, 'User not found');
+  }
+  // 3. Якщо користувач існує
+  // створюємо новий пароль і оновлюємо користувача
+  const hashedPassword = await bcrypt.hash(password, 10);
+  await User.updateOne({ _id: user._id }, { password: hashedPassword });
+  // 4. Інвалідовуємо всі можливі попередні сесії користувача
+  await Session.deleteMany({ userId: user._id });
+  // 5. Повертаємо успішну відповідь
+  res.status(200).json({
+    message: 'Password reset successfully',
+  });
+};
