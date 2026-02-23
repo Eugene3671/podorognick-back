@@ -32,26 +32,33 @@ export const getALLSaveStoryShema = {
   }),
 };
 
-
-
 export const createStorySchema = {
   [Segments.BODY]: Joi.object({
     title: Joi.string().max(80).required().messages({
-      "string.empty": "Title is required",
-      "string.max": "Title must be at most 80 characters",
+      'string.empty': 'Title is required',
+      'string.max': 'Title must be at most 80 characters',
     }),
     article: Joi.string().max(2500).required().messages({
-      "string.empty": "Article is required",
-      "string.max": "Article must be at most 2500 characters",
+      'string.empty': 'Article is required',
+      'string.max': 'Article must be at most 2500 characters',
     }),
 
     category: Joi.string().required().messages({
-      "any.required": "Category is required",
-      "string.empty": "Category is required",
+      'any.required': 'Category is required',
+      'string.empty': 'Category is required',
     }),
     date: Joi.string().required().messages({
-      "any.required": "Date is required",
-      "string.empty": "Date is required",
+      'any.required': 'Date is required',
+      'string.empty': 'Date is required',
     }),
   }),
+};
+
+export const updateStorySchema = {
+  [Segments.BODY]: Joi.object({
+    title: Joi.string().min(3),
+    article: Joi.string().min(10),
+    category: Joi.string(),
+    date: Joi.date(),
+  }).min(1),
 };
