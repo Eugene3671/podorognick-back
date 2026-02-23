@@ -8,7 +8,7 @@ import {
   deleteSaveStory,
   getALLSaveStory,
   createStory,
-  getMyStories
+  getMyStories,
   updateStory, //new
 } from '../controllers/storiesController.js';
 import {
@@ -17,7 +17,7 @@ import {
   deleteSaveStorySchema,
   getALLSaveStoryShema,
   createStorySchema,
-  getMyStoriesSchema
+  getMyStoriesSchema,
   updateStorySchema, //new
 } from '../validations/storiesValidation.js';
 import { authenticate } from '../middleware/authenticate.js';
