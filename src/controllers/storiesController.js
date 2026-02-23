@@ -208,3 +208,22 @@ export const getMyStories = async (req, res) => {
     stories,
   });
 };
+export const updateStory = async (req, res, next) => {
+  try {
+    const { storyId } = req.params;
+
+    const updatedStory = await Traveller.findOneAndUpdate(
+      { _id: storyId, ownerId: req.user._id },
+      req.body,
+      { new: true },
+    );
+
+    if (!updatedStory) {
+      throw createHttpError(404, 'Story not found');
+    }
+
+    res.status(200).json(updatedStory);
+  } catch (error) {
+    next(error);
+  }
+};

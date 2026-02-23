@@ -61,3 +61,11 @@ export const getMyStoriesSchema = {
     perPage: Joi.number().integer().min(3).max(20).default(6),
   }),
 };
+export const updateStorySchema = {
+  [Segments.BODY]: Joi.object({
+    title: Joi.string().min(3),
+    article: Joi.string().min(10),
+    category: Joi.string(),
+    date: Joi.date(),
+  }).min(1),
+};
