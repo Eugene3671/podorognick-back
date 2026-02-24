@@ -1,12 +1,7 @@
-// src/server.js
-
 import express from 'express';
 import 'dotenv/config';
 import cors from 'cors';
 import { errors } from 'celebrate';
-import swaggerUi from 'swagger-ui-express';
-import yaml from 'yamljs';
-import path from 'path';
 import { connectMongoDB } from './db/connectMongoDB.js';
 import { logger } from './middleware/logger.js';
 import { notFoundHandler } from './middleware/notFoundHandler.js';
@@ -17,14 +12,25 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 
 const app = express();
-const PORT = process.env.PORT ?? 3000;
+const PORT = process.env.PORT ?? 5001;
 
-// глобальні middleware
+
+const corsOptions = {
+  origin: 'http://localhost:3000', 
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+  credentials: true,
+};
+
+
 app.use(logger);
+app.use(cors(corsOptions));        
+
+
 app.use(express.json({ limit: '100kb' }));
-app.use(cors());
 app.use(cookieParser());
 app.use(helmet());
+
 app.use(
   rateLimit({
     windowMs: 15 * 60 * 1000,
@@ -32,22 +38,19 @@ app.use(
   }),
 );
 
-// ДОКУМЕНТАЦІЯ SWAGGER
-try {
-  const swaggerDocument = yaml.load(path.resolve('swagger.yaml'));
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-} catch (e) {
-  console.error('Swagger document failed to load:', e);
-}
+
+app.get('/api/test-cors', (req, res) => {
+  res.json({ message: 'CORS работает!' });
+});
+
 
 app.use('/api', rootRouter);
 
-// 404 і обробник помилок — наприкінці ланцюжка
+
 app.use(notFoundHandler);
-
 app.use(errors());
-
 app.use(errorHandler);
+
 
 await connectMongoDB();
 
