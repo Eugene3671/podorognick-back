@@ -22,7 +22,12 @@ const PORT = process.env.PORT ?? 3000;
 // глобальні middleware
 app.use(logger);
 app.use(express.json({ limit: '100kb' }));
-app.use(cors());
+app.use(
+  cors({
+    origin: ['http://localhost:3000', 'https://podorognick-front.vercel.app'],
+    credentials: true,
+  }),
+);
 app.use(cookieParser());
 app.use(helmet());
 app.use(
