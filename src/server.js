@@ -14,7 +14,6 @@ import { errorHandler } from './middleware/errorHandler.js';
 import rootRouter from './routes/index.js';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
-import rateLimit from 'express-rate-limit';
 
 const app = express();
 const PORT = process.env.PORT ?? 5000;
@@ -29,12 +28,6 @@ app.use(
 );
 app.use(express.json({ limit: '100kb' }));
 app.use(cookieParser());
-app.use(
-  rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 100,
-  }),
-);
 
 // ДОКУМЕНТАЦІЯ SWAGGER
 try {
