@@ -138,6 +138,132 @@ paths:
                 $ref: '#/components/schemas/inline_response_200_2'
       security:
         - bearerAuth: []
+  /stories:
+    post:
+      tags:
+        - Stories
+      summary: Створити нову історію
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - title
+                - article
+                - category
+                - date
+                - storyImage
+              properties:
+                title:
+                  type: string
+                article:
+                  type: string
+                category:
+                  type: string
+                date:
+                  type: string
+                  example: 2023-10-15
+                storyImage:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: Історію створено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Story'
+        '400':
+          description: storyImage is required
+        '401':
+          description: Unauthorized
+      security:
+        - bearerAuth: []
+
+  /stories/my:
+    get:
+      tags:
+        - Stories
+      summary: Отримати історії поточного користувача
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: perPage
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 6
+      responses:
+        '200':
+          description: Список історій користувача
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  page:
+                    type: integer
+                  perPage:
+                    type: integer
+                  totalStories:
+                    type: integer
+                  totalPages:
+                    type: integer
+                  stories:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Story'
+        '401':
+          description: Unauthorized
+      security:
+        - bearerAuth: []
+
+  /stories/{storyId}:
+    patch:
+      tags:
+        - Stories
+      summary: Оновити історію
+      parameters:
+        - name: storyId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                article:
+                  type: string
+                category:
+                  type: string
+                date:
+                  type: string
+      responses:
+        '200':
+          description: Історію оновлено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Story'
+        '404':
+          description: Story not found
+        '401':
+          description: Unauthorized
+      security:
+        - bearerAuth: []
   /users:
     get:
       tags:

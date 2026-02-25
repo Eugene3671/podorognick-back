@@ -17,19 +17,18 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 
 const app = express();
-const PORT = process.env.PORT ?? 3000;
+const PORT = process.env.PORT ?? 5000;
 
-// глобальні middleware
 app.use(logger);
-app.use(express.json({ limit: '100kb' }));
+app.use(helmet());
 app.use(
   cors({
     origin: ['http://localhost:3000', 'https://podorognick-front.vercel.app'],
     credentials: true,
   }),
 );
+app.use(express.json({ limit: '100kb' }));
 app.use(cookieParser());
-app.use(helmet());
 app.use(
   rateLimit({
     windowMs: 15 * 60 * 1000,
