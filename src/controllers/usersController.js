@@ -14,7 +14,7 @@ export const getUsers = async (req, res) => {
     perPage = 10,
     search,
     sortBy = '_id',
-    sortOrder = 'asc',
+    sortOrder = 'desc',
   } = req.query;
   const skip = (page - 1) * perPage;
 
