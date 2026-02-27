@@ -51,16 +51,23 @@ export const getUsers = async (req, res) => {
 // Отримати одного юзера за id + його статті
 export const getUserById = async (req, res) => {
   const { userId } = req.params;
-
+  const { page = 1, perPage = 10 } = req.query;
+  const skip = (page - 1) * perPage;
   const user = await User.findById(userId).select('-password');
   if (!user) {
     throw createHttpError(404, 'User not found');
   }
-
-  // отримуємо статті користувача
-  const stories = await Traveller.find({ ownerId: userId });
-
+  const storiesQuery = await Traveller.find({ ownerId: userId });
+  const [totalItems, stories] = await Promise.all(
+    storiesQuery.clone().countDocuments(),
+    storiesQuery.skip(skip).limit(perPage),
+  );
+  const totalPages = Math.ceil(totalItems / perPage);
   res.status(200).json({
+    page,
+    perPage,
+    totalItems,
+    totalPages,
     user,
     stories,
   });

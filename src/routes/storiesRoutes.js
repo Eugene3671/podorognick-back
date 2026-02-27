@@ -9,7 +9,7 @@ import {
   getALLSaveStory,
   createStory,
   getMyStories,
-  updateStory, //new
+  updateStory,
 } from '../controllers/storiesController.js';
 import {
   getAllStoriesShema,
@@ -18,7 +18,7 @@ import {
   getALLSaveStoryShema,
   createStorySchema,
   getMyStoriesSchema,
-  updateStorySchema, //new
+  updateStorySchema,
 } from '../validations/storiesValidation.js';
 import { authenticate } from '../middleware/authenticate.js';
 
