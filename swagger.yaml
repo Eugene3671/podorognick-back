@@ -60,138 +60,339 @@ paths:
       tags:
         - Stories
       summary: Отримати список всіх історій
-      description: 'Цей роут публічний, токен не потрібен.'
       parameters:
-        - name: page
+        - name: category
           in: query
-          description: Номер сторінки
           required: false
           schema:
-            type: integer
-        - name: perPage
-          in: query
-          description: Кількість на сторінці
-          required: false
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: Список історій
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Story'
-  /stories/saved:
-    get:
-      tags:
-        - Stories
-      summary: Отримати збережені історії (Saved)
-      responses:
-        '200':
-          description: Список збережених історій поточного юзера
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Story'
-      security:
-        - bearerAuth: []
-  /stories/{storyId}/save:
-    post:
-      tags:
-        - Stories
-      summary: Додати історію в обране
-      parameters:
-        - name: storyId
-          in: path
-          required: true
-          schema:
             type: string
-      responses:
-        '200':
-          description: Історія додана до збережених
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_200_1'
-      security:
-        - bearerAuth: []
-    delete:
-      tags:
-        - Stories
-      summary: Видалити історію з обраного
-      parameters:
-        - name: storyId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Історія видалена зі збережених
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_200_2'
-      security:
-        - bearerAuth: []
-  /users:
-    get:
-      tags:
-        - Users
-      summary: Отримати список всіх юзерів з пагінацією та фільтрацією
-      parameters:
         - name: page
           in: query
-          description: Номер сторінки
           required: false
           schema:
             type: integer
             default: 1
         - name: perPage
           in: query
-          description: Кількість юзерів на сторінці
+          required: false
+          schema:
+            type: integer
+            default: 9
+        - name: sort
+          in: query
+          required: false
+          description: popular | new
+          schema:
+            type: string
+            enum: [popular, new]
+      responses:
+        '200':
+          description: Список історій
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  page:
+                    type: integer
+                  perPage:
+                    type: integer
+                  totalStories:
+                    type: integer
+                  totalPages:
+                    type: integer
+                  stories:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Story'
+    post:
+      tags:
+        - Stories
+      summary: Створити нову історію
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - title
+                - article
+                - category
+                - date
+                - storyImage
+              properties:
+                title:
+                  type: string
+                article:
+                  type: string
+                category:
+                  type: string
+                date:
+                  type: string
+                storyImage:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: Історію створено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Story'
+  /stories/my:
+    get:
+      tags:
+        - Stories
+      summary: Отримати історії поточного користувача
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: perPage
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 6
+      responses:
+        '200':
+          description: My stories
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  page:
+                    type: integer
+                  perPage:
+                    type: integer
+                  totalStories:
+                    type: integer
+                  totalPages:
+                    type: integer
+                  stories:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Story'
+  /stories/saved:
+    get:
+      tags:
+        - Stories
+      summary: Отримати збережені історії користувача
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: perPage
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Saved stories
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  page:
+                    type: integer
+                  perPage:
+                    type: integer
+                  totalStories:
+                    type: integer
+                  totalPages:
+                    type: integer
+                  stories:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Story'
+  /stories/{storyId}/save:
+    post:
+      tags:
+        - Stories
+      summary: Додати історію в обране
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: storyId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Story saved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+    delete:
+      tags:
+        - Stories
+      summary: Видалити історію з обраного
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: storyId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Story removed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /stories/{storyId}:
+    patch:
+      tags:
+        - Stories
+      summary: Оновити історію
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: storyId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                article:
+                  type: string
+                category:
+                  type: string
+                date:
+                  type: string
+      responses:
+        '200':
+          description: Історію оновлено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Story'
+        '404':
+          description: Story not found
+  /users:
+    get:
+      tags:
+        - Users
+      summary: Отримати список всіх користувачів з пагінацією та фільтрацією
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: perPage
+          in: query
           required: false
           schema:
             type: integer
             default: 10
         - name: search
           in: query
-          description: Текстовий пошук за ім'ям (name)
           required: false
+          description: Текстовий пошук по name
           schema:
             type: string
+        - name: sortBy
+          in: query
+          required: false
+          description: Поле для сортування
+          schema:
+            type: string
+            default: _id
+        - name: sortOrder
+          in: query
+          required: false
+          description: asc | desc
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
       responses:
         '200':
-          description: Успішно отримано список користувачів
+          description: Список користувачів
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_3'
-        '500':
-          description: Помилка сервера
+                type: object
+                properties:
+                  page:
+                    type: integer
+                  perPage:
+                    type: integer
+                  totalItems:
+                    type: integer
+                  totalPages:
+                    type: integer
+                  users:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
   /users/profile:
     get:
       tags:
         - Users
-      summary: Отримати профіль поточного юзера (Me)
+      summary: Отримати профіль поточного користувача
+      security:
+        - bearerAuth: []
       responses:
         '200':
-          description: Дані профілю
+          description: Поточний користувач
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
-      security:
-        - bearerAuth: []
+                type: object
+                properties:
+                  name:
+                    type: string
+                  email:
+                    type: string
+                  avatarUrl:
+                    type: string
+                  description:
+                    type: string
+                  articlesAmount:
+                    type: integer
   /users/{userId}:
     get:
       tags:
         - Users
-      summary: Отримати юзера за ID
+      summary: Отримати користувача за ID
       parameters:
         - name: userId
           in: path
@@ -200,56 +401,85 @@ paths:
             type: string
       responses:
         '200':
-          description: Дані користувача
+          description: Користувач та його історії
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/User'
+                  stories:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Story'
+        '404':
+          description: User not found
   /users/me:
     patch:
       tags:
         - Users
       summary: Оновити дані профілю (крім аватара)
+      security:
+        - bearerAuth: []
       requestBody:
+        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/users_me_body'
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
       responses:
         '200':
           description: Профіль оновлено
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
-      security:
-        - bearerAuth: []
+                type: object
+                properties:
+                  status:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/User'
+        '404':
+          description: User not found
   /users/me/avatar:
     patch:
       tags:
         - Users
       summary: Оновити аватар користувача
+      security:
+        - bearerAuth: []
       requestBody:
+        required: true
         content:
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/me_avatar_body'
+              type: object
+              required:
+                - avatar
+              properties:
+                avatar:
+                  type: string
+                  format: binary
       responses:
         '200':
           description: Аватар оновлено
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_4'
-      security:
-        - bearerAuth: []
-components:
-  schemas:
-    Error:
-      type: object
-      properties:
-        message:
-          type: string
+                type: object
+                properties:
+                  message:
+                    type: string
+                  avatarUrl:
+                    type: string
     User:
       type: object
       properties:
