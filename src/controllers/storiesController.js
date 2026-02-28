@@ -118,9 +118,17 @@ export const deleteSaveStory = async (req, res, next) => {
 };
 
 export const getALLSaveStory = async (req, res) => {
-  const { page = 1, perPage = 10 } = req.query;
+  const { page = 1, perPage = 8, sort = 'nev' } = req.query;
 
   const skip = (page - 1) * perPage;
+
+  if (sort === 'popular') {
+    storiesQuery.sort({ favoriteCount: -1 });
+  }
+
+  if (sort === 'new') {
+    storiesQuery.sort({ date: -1 });
+  }
 
   const storiesQuery = await User.findById(req.user.id)
     .populate({
@@ -129,12 +137,19 @@ export const getALLSaveStory = async (req, res) => {
         skip: skip,
         limit: perPage,
       },
+      populate: [
+        { path: 'category', select: 'name' },
+        { path: 'ownerId', select: 'name avatarUrl' },
+      ],
     })
     .select('savedStories');
 
+  if (!storiesQuery) {
+    return res.status(404).json({ message: 'User not found' });
+  }
+
   const fullUser = await User.findById(req.user.id).select('savedStories');
   const totalStories = fullUser.savedStories.length;
-
   const totalPages = Math.ceil(totalStories / perPage);
 
   res.status(200).json({
@@ -183,10 +198,19 @@ export const createStory = async (req, res) => {
 };
 
 export const getMyStories = async (req, res) => {
-  const { page = 1, perPage = 6 } = req.query;
+  const { page = 1, perPage = 6, sort = 'nev' } = req.query;
   const userId = req.user._id;
   const skip = (page - 1) * perPage;
+
   const storiesQuery = Traveller.find({ ownerId: userId });
+
+  if (sort === 'popular') {
+    storiesQuery.sort({ favoriteCount: -1 });
+  }
+
+  if (sort === 'new') {
+    storiesQuery.sort({ date: -1 });
+  }
 
   const [totalStories, stories] = await Promise.all([
     storiesQuery.clone().countDocuments(),
@@ -195,6 +219,7 @@ export const getMyStories = async (req, res) => {
       .sort({ date: -1 })
       .populate('category', 'name')
       .skip(skip)
+      .populate('ownerId', 'name avatarUrl')
       .limit(Number(perPage)),
   ]);
 
@@ -208,6 +233,7 @@ export const getMyStories = async (req, res) => {
     stories,
   });
 };
+
 export const updateStory = async (req, res, next) => {
   try {
     const { storyId } = req.params;
