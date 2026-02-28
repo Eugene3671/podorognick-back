@@ -51,7 +51,8 @@ export const getUsers = async (req, res) => {
 // Отримати одного юзера за id + його статті
 export const getUserById = async (req, res) => {
   const { userId } = req.params;
-  const { page = 1, perPage = 10 } = req.query;
+  const page = Number(req.query.page) || 1;
+  const perPage = Number(req.query.perPage) || 10;
   const skip = (page - 1) * perPage;
   const user = await User.findById(userId).select('-password');
   if (!user) {
@@ -60,7 +61,11 @@ export const getUserById = async (req, res) => {
   const storiesQuery = Traveller.find({ ownerId: userId });
   const [totalItems, stories] = await Promise.all([
     storiesQuery.clone().countDocuments(),
-    storiesQuery.skip(skip).limit(perPage),
+    storiesQuery
+      .skip(skip)
+      .limit(perPage)
+      .populate('category', 'name')
+      .populate('ownerId', 'name avatarUrl'),
   ]);
   const totalPages = Math.ceil(totalItems / perPage);
   res.status(200).json({
