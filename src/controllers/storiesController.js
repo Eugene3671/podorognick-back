@@ -47,14 +47,12 @@ export const addToSavedStories = async (req, res, next) => {
   const { storyId } = req.params;
   const { id: userId } = req.user;
 
-  const storyObjectId = new mongoose.Types.ObjectId(storyId);
-
   const user = await User.findById(userId);
   if (!user) {
     return res.status(404).json({ message: 'User not found' });
   }
 
-  const story = await Traveller.findById(storyObjectId);
+  const story = await Traveller.findById(storyId);
 
   if (!story) {
     next(createHttpError(404, 'Story not found'));
@@ -64,10 +62,10 @@ export const addToSavedStories = async (req, res, next) => {
   const result = await User.findOneAndUpdate(
     {
       _id: req.user.id,
-      savedStories: { $ne: storyObjectId },
+      savedStories: { $ne: storyId },
     },
     {
-      $push: { savedStories: storyObjectId },
+      $push: { savedStories: storyId },
     },
     { new: true, timestamps: false },
   );
@@ -115,6 +113,12 @@ export const deleteSaveStory = async (req, res, next) => {
   await Traveller.updateOne({ _id: storyId }, { $inc: { favoriteCount: -1 } });
 
   res.status(200).json({ message: 'Story delete' });
+};
+
+export const getStoryById = async (req, res) => {
+  const { storyId } = req.params;
+  const story = await Traveller.findById(storyId).populate('category', 'name');
+  res.status(200).json(story);
 };
 
 export const getALLSaveStory = async (req, res) => {

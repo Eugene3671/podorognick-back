@@ -11,6 +11,14 @@ export const errorHandler = (err, req, res, next) => {
       message: err.message || err.name,
     });
   }
+
+  // Invalid ObjectId :
+  if (err.name === 'CastError') {
+    return res.status(400).json({
+      message: 'Invalid ID format',
+    });
+  }
+
   const isProd = process.env.NODE_ENV === 'production';
 
   // Усі інші помилки — як внутрішні

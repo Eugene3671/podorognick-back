@@ -69,3 +69,9 @@ export const updateStorySchema = {
     date: Joi.date(),
   }).min(1),
 };
+
+export const getStoryByIdSchema = {
+  [Segments.PARAMS]: Joi.object({
+    storyId: Joi.string().hex().length(24).required(),
+  }),
+};
