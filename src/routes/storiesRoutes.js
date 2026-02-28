@@ -10,6 +10,7 @@ import {
   createStory,
   getMyStories,
   updateStory,
+  getStoryById,
 } from '../controllers/storiesController.js';
 import {
   getAllStoriesShema,
@@ -19,6 +20,7 @@ import {
   createStorySchema,
   getMyStoriesSchema,
   updateStorySchema,
+  getStoryByIdSchema,
 } from '../validations/storiesValidation.js';
 import { authenticate } from '../middleware/authenticate.js';
 
@@ -41,12 +43,12 @@ router.delete(
 
 router.post(
   '/',
-  authenticate,
   upload.single('img'),
   celebrate(createStorySchema),
   createStory,
 );
 
 router.patch('/:storyId', celebrate(updateStorySchema), updateStory);
+router.get('/:storyId', celebrate(getStoryByIdSchema), getStoryById);
 
 export default router;
