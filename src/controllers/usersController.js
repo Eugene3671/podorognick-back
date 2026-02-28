@@ -57,7 +57,7 @@ export const getUserById = async (req, res) => {
   if (!user) {
     throw createHttpError(404, 'User not found');
   }
-  const storiesQuery = await Traveller.find({ ownerId: userId });
+  const storiesQuery = Traveller.find({ ownerId: userId });
   const [totalItems, stories] = await Promise.all([
     storiesQuery.clone().countDocuments(),
     storiesQuery.skip(skip).limit(perPage),
