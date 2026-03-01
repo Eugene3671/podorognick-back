@@ -27,6 +27,7 @@ import { authenticate } from '../middleware/authenticate.js';
 const router = Router();
 
 router.get('/', celebrate(getAllStoriesShema), getAllStories);
+router.get('/:storyId', celebrate(getStoryByIdSchema), getStoryById);
 router.use('/', authenticate);
 router.get('/my', celebrate(getMyStoriesSchema), getMyStories);
 router.get('/saved', celebrate(getALLSaveStoryShema), getALLSaveStory);
@@ -49,6 +50,5 @@ router.post(
 );
 
 router.patch('/:storyId', celebrate(updateStorySchema), updateStory);
-router.get('/:storyId', celebrate(getStoryByIdSchema), getStoryById);
 
 export default router;
