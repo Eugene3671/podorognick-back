@@ -117,7 +117,9 @@ export const deleteSaveStory = async (req, res, next) => {
 
 export const getStoryById = async (req, res) => {
   const { storyId } = req.params;
-  const story = await Traveller.findById(storyId).populate('category', 'name');
+  const story = await Traveller.findById(storyId)
+    .populate('category', 'name')
+    .populate('ownerId', 'name avatarUrl description');
   res.status(200).json(story);
 };
 
