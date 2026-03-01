@@ -23,14 +23,23 @@ import {
   getStoryByIdSchema,
 } from '../validations/storiesValidation.js';
 import { authenticate } from '../middleware/authenticate.js';
+import { skipReservedStoryId } from '../middleware/skipReservedStoryId.js';
 
 const router = Router();
 
 router.get('/', celebrate(getAllStoriesShema), getAllStories);
+router.get(
+  '/:storyId',
+  skipReservedStoryId,
+  celebrate(getStoryByIdSchema),
+  getStoryById,
+);
+
 router.use('/', authenticate);
+
 router.get('/my', celebrate(getMyStoriesSchema), getMyStories);
 router.get('/saved', celebrate(getALLSaveStoryShema), getALLSaveStory);
-router.get('/:storyId', celebrate(getStoryByIdSchema), getStoryById);
+
 router.post(
   '/:storyId/save',
   celebrate(addToSavedStoriesSchema),
