@@ -58,6 +58,12 @@ router.post(
   createStory,
 );
 
-router.patch('/:storyId', celebrate(updateStorySchema), updateStory);
+router.patch(
+  '/:storyId',
+  authenticate,
+  upload.single('img'),
+  celebrate(updateStorySchema),
+  updateStory,
+);
 
 export default router;
