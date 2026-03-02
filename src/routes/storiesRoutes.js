@@ -49,6 +49,11 @@ router.post(
   createStory,
 );
 
-router.patch('/:storyId', celebrate(updateStorySchema), updateStory);
+router.patch(
+  '/:storyId',
+  upload.single('img'),
+  celebrate(updateStorySchema),
+  updateStory,
+);
 
 export default router;
