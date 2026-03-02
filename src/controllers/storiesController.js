@@ -243,16 +243,30 @@ export const getMyStories = async (req, res) => {
 export const updateStory = async (req, res, next) => {
   try {
     const { storyId } = req.params;
+    const story = await Traveller.findOne({
+      _id: storyId,
+      ownerId: req.user._id,
+    });
+
+    if (!story) {
+      throw createHttpError(404, 'Story not found');
+    }
+    const updateData = { ...req.body };
+
+    if (req.file) {
+      const result = await saveFileToCloudinary(
+        req.file.buffer,
+        'stories',
+        req.user._id,
+      );
+      updateData.img = result.secure_url;
+    }
 
     const updatedStory = await Traveller.findOneAndUpdate(
       { _id: storyId, ownerId: req.user._id },
-      req.body,
+      updateData,
       { new: true },
     );
-
-    if (!updatedStory) {
-      throw createHttpError(404, 'Story not found');
-    }
 
     res.status(200).json(updatedStory);
   } catch (error) {
