@@ -100,6 +100,6 @@ export const refreshUserSession = async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    message: 'Session refreshed',
+    message: 'Session refreshed succesfuly',
   });
 };
