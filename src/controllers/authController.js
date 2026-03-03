@@ -9,7 +9,7 @@ export const register = async (req, res, next) => {
 
   try {
     const exist = await User.findOne({ email });
-    if (exist) return next(createHttpError(400, 'User already exists'));
+    if (exist) return next(createHttpError(409, 'User already exists'));
 
     const newUser = await User.create({
       name,
