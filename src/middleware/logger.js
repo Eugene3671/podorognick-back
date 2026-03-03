@@ -1,5 +1,3 @@
-// src/middleware/logger.js
-
 import pino from 'pino-http';
 
 const isDevelopment = process.env.NODE_ENV === 'development';

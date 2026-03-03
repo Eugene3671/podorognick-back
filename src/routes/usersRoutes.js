@@ -20,24 +20,15 @@ import {
 
 const router = Router();
 
-// Отримати всіх користувачів
 router.get('/', celebrate(getUsersSchema), getUsers);
-
-// Отримати профіль поточного користувача
 router.get('/profile', authenticate, getCurrentUser);
-
-// Отримати користувача по ID з валідацією
 router.get('/:userId', celebrate(userIdParamSchema), getUserById);
-
-// Оновити аватар
 router.patch(
   '/me/avatar',
   authenticate,
   upload.single('avatarUrl'),
   updateUserAvatar,
 );
-
-// Оновити дані користувача
 router.patch('/me', authenticate, updateUserDetails);
 
 export default router;

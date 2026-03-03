@@ -5,10 +5,7 @@ import { User } from '../models/user.js';
 import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
 import { Traveller } from '../models/traveller.js';
 
-// Отримати список усіх юзерів
 export const getUsers = async (req, res) => {
-  // Отримуємо параметри пагінації та сортування
-  // по замовчуванню сортуємо за articlesAmount по спаданню
   const {
     page = 1,
     perPage = 10,
@@ -18,25 +15,20 @@ export const getUsers = async (req, res) => {
   } = req.query;
   const skip = (page - 1) * perPage;
 
-  // Створюємо базовий запит до колекції
   const usersQuery = User.find();
 
-  // Текстовий пошук по name (працює лише якщо створено текстовий індекс)
   if (search) {
     usersQuery.where({ $text: { $search: search } });
   }
 
-  // Виконуємо одразу два запити паралельно
   const [totalItems, users] = await Promise.all([
     usersQuery.clone().countDocuments(),
     usersQuery
       .skip(skip)
       .limit(perPage)
-      // Додамєдо сортування в ланцюжок методів квері
       .sort({ [sortBy]: sortOrder }),
   ]);
 
-  // Обчислюємо загальну кількість «сторінок»
   const totalPages = Math.ceil(totalItems / perPage);
 
   res.status(200).json({
@@ -48,7 +40,6 @@ export const getUsers = async (req, res) => {
   });
 };
 
-// Отримати одного юзера за id + його статті
 export const getUserById = async (req, res) => {
   const { userId } = req.params;
   const page = Number(req.query.page) || 1;
@@ -78,7 +69,6 @@ export const getUserById = async (req, res) => {
   });
 };
 
-// Отримати профіль поточного юзера
 export const getCurrentUser = async (req, res) => {
   const user = req.user;
 
